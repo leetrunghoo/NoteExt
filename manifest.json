@@ -1,0 +1,30 @@
+{
+    "name": "Take note",
+    "description": "You can quickly write note or record",
+    "version": "1.0",
+    "manifest_version": 2,
+    "browser_action": {
+        "default_icon": "icon.png",
+        "default_popup": "popup.html"
+    },
+    "options_page": "options.html",
+    "background": {
+        "scripts": ["js/background.js"]
+    },
+    "permissions": [
+          "storage"
+        ],
+    "commands": {
+        "toggle-feature": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+Y"
+            },
+            "description": "Send a 'toggle-feature' event to the extension"
+        },
+        "_execute_browser_action": {
+            "suggested_key": {
+                "default": "Alt+W"
+            }
+        }
+    }
+}

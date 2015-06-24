@@ -1,0 +1,32 @@
+body {
+    width: 320px;
+    min-height: 200px;
+}
+
+.collection-item .title {
+    font-size: 14px;
+    width: 230px;
+}
+
+.collection-item.note {
+    position: relative;
+}
+
+.collection-item.note .secondary-content {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.collection-item .mdi-action-delete {
+    font-size: 20px;
+}
+
+.collection-item.record .mdi-av-volume-up {
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.collection-item audio {
+    width: 260px;
+}
