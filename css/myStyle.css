@@ -30,3 +30,21 @@ body {
 .collection-item audio {
     width: 260px;
 }
+
+#listNotes {
+    padding-bottom: 80px;
+}
+
+.fixed-bottom {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding: 10px 10px 10px 0;
+    background-color: white;
+    -webkit-box-shadow: 0 -5px 15px -5px #333;
+    -moz-box-shadow: 0 -5px 15px -5px #333;
+    box-shadow: 0 -5px 15px -5px #333;
+}
+.fixed-bottom .row {
+    margin: 0;
+}

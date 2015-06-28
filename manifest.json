@@ -8,19 +8,10 @@
         "default_popup": "popup.html"
     },
     "options_page": "options.html",
-    "background": {
-        "scripts": ["js/background.js"]
-    },
     "permissions": [
           "storage"
         ],
     "commands": {
-        "toggle-feature": {
-            "suggested_key": {
-                "default": "Ctrl+Shift+Y"
-            },
-            "description": "Send a 'toggle-feature' event to the extension"
-        },
         "_execute_browser_action": {
             "suggested_key": {
                 "default": "Alt+W"

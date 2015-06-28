@@ -4,30 +4,36 @@ document.addEventListener('DOMContentLoaded', function () {
     var btnAddNote = document.getElementById('btnAddNote');
     var btnRecord = document.getElementById('btnRecord');
     var btnStop = document.getElementById('btnStop');
+    var btnSaveNoteText = document.getElementById('btnSaveNoteText');
     var audio = document.getElementById('audio');
     var listNotes = document.getElementById('listNotes');
     var txtNote = document.getElementById('txtNote');
+    var txtNoteText = document.getElementById('txtNoteText');
     var deleteNote = document.getElementsByClassName('deleteNote');
     var arrCurrentNotes = [];
     var arrCurrentRecords = [];
+    var recordObj_tmp;
 
-    $('.modal-trigger').leanModal();
+    $('.modal-trigger').leanModal({
+        dismissible: false // Modal can be dismissed by clicking outside of the modal
+    }
+    );
 
     function addNote2UI(note) {
         var li = document.createElement("li");
         li.className = "collection-item note";
-        li.innerHTML = '<div class="title truncate">' + note.value + '</div>' + note.date + '<a href="#!" class="secondary-content deleteNote"><i class="mdi-action-delete"></i></a>';
+        li.innerHTML = '<div class="title truncate">' + note.text + '</div>' + note.date + '<a href="#!" class="secondary-content deleteNote"><i class="mdi-action-delete"></i></a>';
         listNotes.appendChild(li);
     }
 
     function addRecord2UI(record) {
+        console.log(record);
         var li = document.createElement("li");
         li.className = 'collection-item record';
-        li.innerHTML = '<audio controls="" ></audio><br/>' + record.date + '<a href="#!" class="secondary-content deleteRecord"><i class="mdi-action-delete"></i></a><a href="#!" class="secondary-content playRecord"><i class="mdi-av-volume-up"></i></a>';
+        li.innerHTML = '<div class="title truncate">' + record.text + '</div><audio controls="" ></audio><br/>' + record.date + '<a href="#!" class="secondary-content deleteRecord"><i class="mdi-action-delete"></i></a>';
         listNotes.appendChild(li);
-
-        var recordAudio = li.children[0];;
-        recordAudio.src = record.data;
+        var recordAudio = li.children[1];
+        recordAudio.src = record.recordData;
     }
 
     function saveNotes2Storage(arrCurrentNotes) {
@@ -53,7 +59,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 var note = data.notes[i];
                 console.log('note', note);
                 arrCurrentNotes.push(note);
-                note.id = i;
                 addNote2UI(note);
             }
         }
@@ -61,12 +66,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // load old record
     cStorageAreaLocal.get("records", function (data) {
+        console.log('records', data);
         if (data.records && data.records.length > 0) {
             for (i in data.records) {
                 var record = data.records[i];
                 console.log('record', record);
                 arrCurrentRecords.push(record);
-                record.id = i;
                 addRecord2UI(record);
             }
         }
@@ -79,13 +84,8 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        var date = new Date().toString();
-        date = date.split("GMT")[0];
-        var note = {
-                date: date,
-                value: txtNote.value
-            }
-            // Save it using the Chrome extension storage API.
+        var note = newNoteObj(getTime(), txtNote.value);
+        // Save it using the Chrome extension storage API.
         arrCurrentNotes.push(note);
         saveNotes2Storage(arrCurrentNotes);
         // add note to UI
@@ -96,7 +96,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // delete note
     $("#listNotes").on("click", ".deleteNote", function () {
         var i = $(".note").index($(this).parent());
-        console.log(i)
         arrCurrentNotes.splice(i, 1);
         saveNotes2Storage(arrCurrentNotes);
         $(this).parent().remove();
@@ -104,22 +103,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // delete record
     $("#listNotes").on("click", ".deleteRecord", function () {
         var i = $(".record").index($(this).parent());
-        console.log(i)
         arrCurrentRecords.splice(i, 1);
         saveRecords2Storage(arrCurrentRecords);
         $(this).parent().remove();
     });
 
-
-    // play record
-    $("#listNotes").on("click", ".playRecord", function () {
-        var i = $(".record").index($(this).parent());
-        var record = arrCurrentRecords[i];
-        console.log(record)
-        audio.src = record.data;
-        audio.muted = false;
-        audio.play();
-    });
 
     // record
     var audioStream;
@@ -128,9 +116,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     btnRecord.onclick = function () {
         navigator.getUserMedia = navigator.getUserMedia ||
-            navigator.webkitGetUserMedia ||
-            navigator.mozGetUserMedia ||
-            navigator.msGetUserMedia;
+                navigator.webkitGetUserMedia ||
+                navigator.mozGetUserMedia ||
+                navigator.msGetUserMedia;
         if (!isRecording) {
             var mediaConstraints = {
                 audio: true
@@ -139,7 +127,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
             function onMediaSuccess(stream) {
                 if (!audioStream) {
-                    if (window.IsChrome) stream = new window.MediaStream(stream.getAudioTracks());
+                    if (window.IsChrome) {
+                        stream = new window.MediaStream(stream.getAudioTracks());
+                    }
                     audioStream = stream;
 
                     // "audio" is a default type
@@ -155,13 +145,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     audio.src = URL.createObjectURL(audioStream);
                     audio.muted = true;
                     audio.play();
-                    if (recorder) recorder.startRecording();
+                    if (recorder) {
+                        recorder.startRecording();
+                    }
                 }
                 isRecording = true;
             }
 
             function onMediaError(e) {
                 console.error('media error', e);
+                $('#modalRecording').closeModal();
+                alert('please check "Use recording feature" in Option Page');
             }
         } else {
             stopRecording();
@@ -178,23 +172,30 @@ document.addEventListener('DOMContentLoaded', function () {
                 audio.src = url;
                 audio.muted = false;
                 audio.play();
-                var date = new Date().toString();
-                date = date.split("GMT")[0];
                 recorder.getDataURL(function (dataURL) {
-                    var record = {
-                        id: arrCurrentRecords.length,
-                        date: date,
-                        data: dataURL
-                    }
-                    arrCurrentRecords.push(record);
-                    // Save it using the Chrome extension storage API.
-                    saveRecords2Storage(arrCurrentRecords);
-                    // add to UI
-                    addRecord2UI(record);
+                    recordObj_tmp = newRecordObj(getTime(), "", dataURL);
+                    $('#modalNoteText').openModal();
                 });
             });
         }
     }
+
+    // add record!
+    btnSaveNoteText.addEventListener('click', function () {
+        if (!txtNoteText.value) {
+            alert('Please enter note :)');
+            return;
+        }
+        recordObj_tmp.text = txtNoteText.value;
+        arrCurrentRecords.push(recordObj_tmp);
+        // Save it using the Chrome extension storage API.
+        saveRecords2Storage(arrCurrentRecords);
+        // add to UI
+        addRecord2UI(recordObj_tmp);
+        txtNoteText.value = "";
+        $('#modalNoteText').closeModal();
+        $('#modalRecording').closeModal();
+    }, false);
 
 });
 
@@ -202,14 +203,30 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
     for (key in changes) {
         var storageChange = changes[key];
         console.log('Storage key "%s" in namespace "%s" changed. ' +
-            'Old value was "%s", new value is "%s".',
-            key,
-            namespace,
-            storageChange.oldValue,
-            storageChange.newValue);
+                'Old value was "%s", new value is "%s".',
+                key,
+                namespace,
+                storageChange.oldValue,
+                storageChange.newValue);
     }
 });
-//
-//chrome.commands.onCommand.addListener(function (command) {
-//    console.log('onCommand event received for message: ', command);
-//});
+
+function getTime() {
+    var date = new Date().toString();
+    date = date.split("GMT")[0];
+    return date;
+}
+
+function newNoteObj(date, text) {
+    return {
+        date: date,
+        text: text
+    };
+}
+
+
+function newRecordObj(date, text, recordData) {
+    var obj = newNoteObj(date, text);
+    obj.recordData = recordData;
+    return obj;
+}
