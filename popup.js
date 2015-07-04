@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var btnRecord = document.getElementById('btnRecord');
     var btnStop = document.getElementById('btnStop');
     var btnSaveNoteText = document.getElementById('btnSaveNoteText');
+    var btnCancelNoteText = document.getElementById('btnCancelNoteText');
     var audio = document.getElementById('audio');
     var listNotes = document.getElementById('listNotes');
     var txtNote = document.getElementById('txtNote');
@@ -15,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var recordObj_tmp;
 
     $('.modal-trigger').leanModal({
-        dismissible: false // Modal can be dismissed by clicking outside of the modal
+        dismissible: false // Modal can't be dismissed by clicking outside of the modal
     }
     );
 
@@ -181,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // add record!
-    btnSaveNoteText.addEventListener('click', function () {
+    btnSaveNoteText.onclick = function () {
         if (!txtNoteText.value) {
             alert('Please enter note :)');
             return;
@@ -195,7 +196,12 @@ document.addEventListener('DOMContentLoaded', function () {
         txtNoteText.value = "";
         $('#modalNoteText').closeModal();
         $('#modalRecording').closeModal();
-    }, false);
+    };
+    
+    btnCancelNoteText.onclick = function() {
+        $('#modalNoteText').closeModal();
+        $('#modalRecording').closeModal();
+    };
 
 });
 
