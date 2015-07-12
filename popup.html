@@ -1,72 +1,82 @@
 <!doctype html>
 <html>
 
-<head>
-    <title>Take note</title>
-    <link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection" />
-    <link type="text/css" rel="stylesheet" href="css/myStyle.css" media="screen,projection" />
-</head>
+    <head>
+        <title>Take note</title>
+        <link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection" />
+        <link type="text/css" rel="stylesheet" href="css/myStyle.css" media="screen,projection" />
+    </head>
 
-<body>
-    <h5 class="center-align">List notes</h5>
-    <ul id="listNotes" class="collection with-header"></ul>
-    <form class="col s12 fixed-bottom">
-        <div class="row">
-            <div class="input-field col s7">
-                <input id="txtNote" type="text" class="validate" required autofocus>
-                <label for="txtNote">new note</label>
+    <body>
+        <h5 class="center-align">List notes</h5>
+        <ul id="listNotes" class="collection with-header"></ul>
+        <form class="col s12 fixed-bottom">
+            <div class="row">
+                <div class="input-field col s7">
+                    <input id="txtNote" type="text" class="validate" required autofocus>
+                    <label for="txtNote">new note</label>
+                </div>
+                <div class="input-field col s5">
+                    <button class="btn waves-effect waves-light col s5" id="btnAddNote">
+                        <i class="mdi-content-send"></i>
+                    </button>
+                    <a class="btn waves-effect waves-light col s5 right red darken-3 modal-trigger" href="#modalRecording" id="btnRecord">
+                        <i class="mdi-av-mic"></i>
+                    </a>
+                </div>
+                <audio id="audio" autoplay="" controls="" style="display: none"></audio>
             </div>
-            <div class="input-field col s5">
-                <button class="btn waves-effect waves-light col s5" id="btnAddNote">
-                    <i class="mdi-content-send"></i>
-                </button>
-                <a class="btn waves-effect waves-light col s5 right red darken-3 modal-trigger" href="#modalRecording" id="btnRecord">
-                    <i class="mdi-av-mic"></i>
-                </a>
+        </form>
+
+        <!-- Modal show full note -->
+        <div id="modalFullNote" class="modal">
+            <div class="modal-content full-note">
             </div>
-            <audio id="audio" autoplay="" controls="" style="display: none"></audio>
+            <div class="modal-footer">
+                <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+            </div>
         </div>
-    </form>
-    <!-- Modal Structure -->
-    <div id="modalRecording" class="modal">
-        <div class="modal-content">
-            <div class="row col s12">
-                <h5 class="red-text text-darken-3 col s8">Recording...</h5>
-                <a class="btn waves-effect waves-light red darken-3 col s3 right" id="btnStop" title="stop recording">
-                    <i class="mdi-av-mic-off">
+
+        <!-- Modal Recording -->
+        <div id="modalRecording" class="modal">
+            <div class="modal-content">
+                <div class="row col s12">
+                    <h5 class="red-text text-darken-3 col s8">Recording...</h5>
+                    <a class="btn waves-effect waves-light red darken-3 col s3 right modal-trigger" href="#modalNoteText" id="btnStop" title="stop recording">
+                        <i class="mdi-av-mic-off">
                         </i>
-                </a>
-            </div>
-            <div class="row col s12">
-                <p>Speak whatever you like :D</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Input Note Text -->
-    <div id="modalNoteText" class="modal">
-        <div class="modal-content">
-            <form class="col s12">
-                <div class="row input-field">
-                    <label for="txtNoteText">new note</label>
-                    <input id="txtNoteText" type="text" class="validate" required autofocus/>
+                    </a>
                 </div>
                 <div class="row col s12">
-                    <button id="btnSaveNoteText" class="modal-action btn waves-effect waves-light" type="submit">Save</button>
-                    <a id="btnCancelNoteText" href="#!" class="modal-action modal-close btn-flat waves-effect waves-light darken-3 col s3 right">
+                    <p>Speak whatever you like :D</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Input Note Text -->
+        <div id="modalNoteText" class="modal">
+            <div class="modal-content">
+                <form class="col s12">
+                    <div class="row input-field">
+                        <label for="txtNoteText">new note</label>
+                        <input id="txtNoteText" type="text" class="validate" required autofocus/>
+                    </div>
+                    <div class="row col s12">
+                        <button id="btnSaveNoteText" class="modal-action btn waves-effect waves-light" type="submit">Save</button>
+                        <a id="btnCancelNoteText" href="#!" class="modal-action modal-close btn-flat waves-effect waves-light darken-3 col s3 right">
                             cancel
                         </a>
-                </div>
-            </form>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
 
 
-    <script src="js/jquery-2.1.4.min.js"></script>
-    <script src="js/materialize.min.js"></script>
-    <script src="js/recordRTC.js"></script>
-    <script src="popup.js"></script>
+        <script src="js/jquery-2.1.4.min.js"></script>
+        <script src="js/materialize.min.js"></script>
+        <script src="js/recordRTC.js"></script>
+        <script src="popup.js"></script>
 
-</body>
+    </body>
 
 </html>

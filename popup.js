@@ -17,8 +17,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
     $('.modal-trigger').leanModal({
         dismissible: false // Modal can't be dismissed by clicking outside of the modal
-    }
-    );
+    });
+    
+    // view full note
+    $("#listNotes").on("click", ".title.truncate", function () {
+        var fullText = $(this).text();
+        $('#modalFullNote').find(".modal-content").text(fullText);
+        $('#modalFullNote').openModal();
+    });
+
+    // delete note
+    $("#listNotes").on("click", ".deleteNote", function () {
+        var i = $(".note").index($(this).parent());
+        arrCurrentNotes.splice(i, 1);
+        saveNotes2Storage(arrCurrentNotes);
+        $(this).parent().remove();
+    });
+    // delete record
+    $("#listNotes").on("click", ".deleteRecord", function () {
+        var i = $(".record").index($(this).parent());
+        arrCurrentRecords.splice(i, 1);
+        saveRecords2Storage(arrCurrentRecords);
+        $(this).parent().remove();
+    });
 
     function addNote2UI(note) {
         var li = document.createElement("li");
@@ -94,22 +115,6 @@ document.addEventListener('DOMContentLoaded', function () {
         txtNote.value = "";
     }, false);
 
-    // delete note
-    $("#listNotes").on("click", ".deleteNote", function () {
-        var i = $(".note").index($(this).parent());
-        arrCurrentNotes.splice(i, 1);
-        saveNotes2Storage(arrCurrentNotes);
-        $(this).parent().remove();
-    });
-    // delete record
-    $("#listNotes").on("click", ".deleteRecord", function () {
-        var i = $(".record").index($(this).parent());
-        arrCurrentRecords.splice(i, 1);
-        saveRecords2Storage(arrCurrentRecords);
-        $(this).parent().remove();
-    });
-
-
     // record
     var audioStream;
     var recorder;
@@ -175,7 +180,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 audio.play();
                 recorder.getDataURL(function (dataURL) {
                     recordObj_tmp = newRecordObj(getTime(), "", dataURL);
-                    $('#modalNoteText').openModal();
                 });
             });
         }

@@ -7,6 +7,9 @@ body {
     font-size: 14px;
     width: 230px;
 }
+.collection-item .title.truncate {
+    cursor: pointer;
+}
 
 .collection-item.note {
     position: relative;
@@ -29,6 +32,11 @@ body {
 
 .collection-item audio {
     width: 260px;
+    margin-top: 10px;
+}
+
+.full-note {
+    font-size: 14px;
 }
 
 #listNotes {
