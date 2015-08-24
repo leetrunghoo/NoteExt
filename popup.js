@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
     $('.modal-trigger').leanModal({
         dismissible: false // Modal can't be dismissed by clicking outside of the modal
     });
-    
+
     // view full note
     $("#listNotes").on("click", ".title.truncate", function () {
         var fullText = $(this).text();
@@ -49,7 +49,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function addRecord2UI(record) {
-        console.log(record);
         var li = document.createElement("li");
         li.className = 'collection-item record';
         li.innerHTML = '<div class="title truncate">' + record.text + '</div><audio controls="" ></audio><br/>' + record.date + '<a href="#!" class="secondary-content deleteRecord"><i class="mdi-action-delete"></i></a>';
@@ -79,7 +78,6 @@ document.addEventListener('DOMContentLoaded', function () {
         if (data.notes && data.notes.length > 0) {
             for (i in data.notes) {
                 var note = data.notes[i];
-                console.log('note', note);
                 arrCurrentNotes.push(note);
                 addNote2UI(note);
             }
@@ -88,11 +86,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // load old record
     cStorageAreaLocal.get("records", function (data) {
-        console.log('records', data);
         if (data.records && data.records.length > 0) {
             for (i in data.records) {
                 var record = data.records[i];
-                console.log('record', record);
                 arrCurrentRecords.push(record);
                 addRecord2UI(record);
             }
@@ -102,7 +98,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // add note!
     btnAddNote.addEventListener('click', function () {
         if (!txtNote.value) {
-            alert('Please enter note :)');
             return;
         }
 
@@ -122,9 +117,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     btnRecord.onclick = function () {
         navigator.getUserMedia = navigator.getUserMedia ||
-                navigator.webkitGetUserMedia ||
-                navigator.mozGetUserMedia ||
-                navigator.msGetUserMedia;
+            navigator.webkitGetUserMedia ||
+            navigator.mozGetUserMedia ||
+            navigator.msGetUserMedia;
         if (!isRecording) {
             var mediaConstraints = {
                 audio: true
@@ -159,9 +154,11 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             function onMediaError(e) {
-                console.error('media error', e);
                 $('#modalRecording').closeModal();
                 alert('please check "Use recording feature" in Option Page');
+                chrome.tabs.create({
+                    'url': "/options.html"
+                })
             }
         } else {
             stopRecording();
@@ -187,10 +184,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // add record!
     btnSaveNoteText.onclick = function () {
-        if (!txtNoteText.value) {
-            alert('Please enter note :)');
-            return;
-        }
+        //        if (!txtNoteText.value) {
+        //            alert('Please enter note :)');
+        //            return;
+        //        }
         recordObj_tmp.text = txtNoteText.value;
         arrCurrentRecords.push(recordObj_tmp);
         // Save it using the Chrome extension storage API.
@@ -201,8 +198,8 @@ document.addEventListener('DOMContentLoaded', function () {
         $('#modalNoteText').closeModal();
         $('#modalRecording').closeModal();
     };
-    
-    btnCancelNoteText.onclick = function() {
+
+    btnCancelNoteText.onclick = function () {
         $('#modalNoteText').closeModal();
         $('#modalRecording').closeModal();
     };
@@ -213,11 +210,11 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
     for (key in changes) {
         var storageChange = changes[key];
         console.log('Storage key "%s" in namespace "%s" changed. ' +
-                'Old value was "%s", new value is "%s".',
-                key,
-                namespace,
-                storageChange.oldValue,
-                storageChange.newValue);
+            'Old value was "%s", new value is "%s".',
+            key,
+            namespace,
+            storageChange.oldValue,
+            storageChange.newValue);
     }
 });
 
